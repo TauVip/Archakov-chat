@@ -1,4 +1,3 @@
-import { Component } from 'react'
 import { Form, Input } from 'antd'
 import {
   UserOutlined,
@@ -9,20 +8,19 @@ import {
 import { Link } from 'react-router-dom'
 import { Button, Block } from '../../../components'
 
+const success = false
+
 const RegisterForm = props => {
   const {
     values,
     touched,
     errors,
-    isSubmitting,
     handleChange,
     handleBlur,
     handleSubmit,
-    handleReset,
-    dirty
+    isValid,
+    isSubmitting
   } = props
-
-  const success = false
 
   return (
     <div>
@@ -34,7 +32,10 @@ const RegisterForm = props => {
         {!success ? (
           <Form onSubmit={handleSubmit}>
             <Form.Item
-              validateStatus={errors.email && touched.email}
+              validateStatus={
+                !touched.email ? '' : errors.email ? 'error' : 'success'
+              }
+              help={!touched.email ? '' : errors.email}
               hasFeedback
             >
               <Input
@@ -65,8 +66,15 @@ const RegisterForm = props => {
                 placeholder='Ваше имя'
               />
             </Form.Item>
-            <Form.Item>
+            <Form.Item
+              validateStatus={
+                !touched.password ? '' : errors.password ? 'error' : 'success'
+              }
+              help={!touched.password ? '' : errors.password}
+              hasFeedback
+            >
               <Input
+                id='password'
                 prefix={
                   <LockOutlined
                     className='site-form-item-icon'
@@ -76,6 +84,9 @@ const RegisterForm = props => {
                 size='large'
                 type='password'
                 placeholder='Пароль'
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
             </Form.Item>
             <Form.Item>
@@ -92,7 +103,8 @@ const RegisterForm = props => {
               />
             </Form.Item>
             <Form.Item>
-              <Button type='primary' size='large'>
+              {isSubmitting && !isValid && <span>Ошибка!</span>}
+              <Button onClick={handleSubmit} type='primary' size='large'>
                 Зарегистрироваться
               </Button>
             </Form.Item>
